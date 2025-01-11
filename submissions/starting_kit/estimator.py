@@ -63,11 +63,11 @@ def add_real_period(X_df):
 
 
 transformer_r = FunctionTransformer(
-    lambda X_df: get_bin_means(X_df, 5, 'r')
+    lambda X_df: get_bin_means(X_df, 7, 'r') # trying with different num_bins
 )
 
 transformer_b = FunctionTransformer(
-    lambda X_df: get_bin_means(X_df, 5, 'b')
+    lambda X_df: get_bin_means(X_df, 7, 'b') # trying with different num_bins
 )
 
 # Create the FunctionTransformer
@@ -102,22 +102,12 @@ pipe = make_pipeline(
     real_period_transformer,
     transformer,
     SimpleImputer(strategy='mean'),
-    RandomForestClassifier(max_depth=5, n_estimators=10)
+    RandomForestClassifier(n_estimators=30, max_depth=5, min_samples_split=10,
+                       min_samples_leaf=2, class_weight='balanced', n_jobs=-1) # laverage the time train with parameters or try other models like GradientBoostingClassifier
 )
-
-
-# Hyperparameter tuning
-param_grid = {
-    'randomforestclassifier__max_depth': [5, 10, 15],
-    'randomforestclassifier__n_estimators': [50, 100, 200],
-    'randomforestclassifier__min_samples_split': [2, 5, 10],
-    'randomforestclassifier__min_samples_leaf': [1, 2, 4],
-}
-
-grid_search = GridSearchCV(pipe, param_grid, cv=3)
 
 # Final pipeline
 def get_estimator():
-    return grid_search
+    return pipe
 
 
