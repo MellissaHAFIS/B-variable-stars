@@ -1,13 +1,9 @@
 import numpy as np
-import pandas as pd
-
 from sklearn.preprocessing import FunctionTransformer, StandardScaler, PolynomialFeatures
 from sklearn.compose import make_column_transformer
 from sklearn.pipeline import make_pipeline
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.model_selection import GridSearchCV
 
 
 def fold_time_series(time_point, period, div_period):
@@ -102,12 +98,10 @@ pipe = make_pipeline(
     real_period_transformer,
     transformer,
     SimpleImputer(strategy='mean'),
-    RandomForestClassifier(n_estimators=30, max_depth=5, min_samples_split=10,
-                       min_samples_leaf=2, class_weight='balanced', n_jobs=-1) # laverage the time train with parameters or try other models like GradientBoostingClassifier
+    GradientBoostingClassifier(n_estimators=50, max_depth=3, min_samples_split=10, min_samples_leaf=2,
+                               learning_rate=0.1, subsample=0.8)
 )
 
 # Final pipeline
 def get_estimator():
     return pipe
-
-
